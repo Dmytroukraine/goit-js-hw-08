@@ -1,33 +1,32 @@
-// Add imports above this line
 import { galleryItems } from './gallery-items';
-// Change code below this line
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
+import '../css/common.css';
+import '../css/01-gallery.css';
 
-import "simplelightbox/dist/simple-lightbox.min.css";
-import SimpleLightbox from "simplelightbox";
+const createItemsMarkup = galleryItems
+  .map(({ preview, original, description }) => {
+    return `
+    <a class="gallery__item" href="${original}">
+    <img class="gallery__image" src="${preview}" alt="${description}" />
+  </a>
+      `;
+  })
+  .join('');
 
-const galleryList = document.querySelector(".gallery");
-
-// Create and render gallery items
-const createGalleryItem = ({ preview, original, description }) => `
-  <li class="gallery__item">
-    <a class="gallery__link" href="${original}" data-original-img=${original}>
-      <img class="gallery__image" src="${preview}" alt="${description}" />
-    </a>
-  </li>
-`;
-
-galleryList.innerHTML = galleryItems.map(createGalleryItem).join("");
-
-// Create instances of SimpleLightbox
-const lightbox = new SimpleLightbox(".gallery a", {
-  captions: true,
+const alleryContainerEl = document.querySelector('.gallery');
+alleryContainerEl.insertAdjacentHTML('beforeend', createItemsMarkup);
+let lightbox = new SimpleLightbox('.gallery a', {
+  scrollZoom: false,
   captionDelay: 250,
+  captionsData: 'alt',
+  doubleTapZoom: 1,
 });
-
-// Open the lightbox on image click
-galleryList.addEventListener("click", (event) => {
+alleryContainerEl.addEventListener('click', event => {
   event.preventDefault();
-  lightbox.open();
+  if (!event.target.classList.contains('gallery__image')) {
+    return;
+  }
 });
 
 
