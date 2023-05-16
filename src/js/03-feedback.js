@@ -1,39 +1,34 @@
-import '../css/common.css';
-import '../css/03-feedback.css';
 import throttle from 'lodash.throttle';
 
-const STORAGE_KEY = 'feedback-form-state';
 const refs = {
-  form: document.querySelector('.feedback-form'),
-  textarea: document.querySelector('.feedback-form textarea'),
-  input: document.querySelector('input'),
+  email: document.querySelector('[name="email"]'),
+  textarea: document.querySelector('[name="message"]'),
+  form: document.querySelector('form'),
 };
-const formData = {};
 
-populateTextarea();
+const FEEDBACK_DATA = 'feedback-form-state';
+let feedbackData = JSON.parse(localStorage.getItem(FEEDBACK_DATA)) || {};
 
-refs.form.addEventListener('input', throttle(onTextareaInput, 500));
+const recoverData = () => {
+  refs.email.value = feedbackData.email || '';
+  refs.textarea.value = feedbackData.message || '';
+};
 
-refs.form.addEventListener('submit', e => {
-  e.preventDefault();
-  e.currentTarget.reset();
-  const objData = JSON.parse(localStorage.getItem(STORAGE_KEY));
-  localStorage.removeItem(STORAGE_KEY);
-});
+recoverData();
 
-function onTextareaInput(e) {
-  formData[e.target.name] = e.target.value;
-  const stringifiedData = JSON.stringify(formData);
-  localStorage.setItem(STORAGE_KEY, stringifiedData);
-}
+const updateFeedbackData = event => {
+  feedbackData[event.target.name] = event.target.value;
+  localStorage.setItem(FEEDBACK_DATA, JSON.stringify(feedbackData));
+};
+const onFormSubmitting = event => {
+  event.preventDefault();
 
-function populateTextarea() {
-  const savedMessage = JSON.parse(localStorage.getItem(STORAGE_KEY));
+  console.log(feedbackData);
 
-  if (savedMessage === null) {
-    //console.log(savedMessage);
-    return;
-  }
-  refs.textarea.value = savedMessage['message'] || '';
-  refs.input.value = savedMessage['email'] || '';
-}
+  localStorage.removeItem(FEEDBACK_DATA);
+  event.currentTarget.reset();
+  feedbackData = {};
+};
+
+refs.form.addEventListener('input', throttle(updateFeedbackData, 500));
+refs.form.addEventListener('submit', onFormSubmitting);
