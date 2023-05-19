@@ -20,14 +20,19 @@ const updateFeedbackData = event => {
   feedbackData[event.target.name] = event.target.value;
   localStorage.setItem(FEEDBACK_DATA, JSON.stringify(feedbackData));
 };
+
 const onFormSubmitting = event => {
   event.preventDefault();
 
-  console.log(feedbackData);
+  if (refs.email.value && refs.textarea.value) {
+    console.log(feedbackData);
 
-  localStorage.removeItem(FEEDBACK_DATA);
-  event.currentTarget.reset();
-  feedbackData = {};
+    localStorage.removeItem(FEEDBACK_DATA);
+    event.currentTarget.reset();
+    feedbackData = {};
+  } else {
+    console.log('Please fill in all fields');
+  }
 };
 
 refs.form.addEventListener('input', throttle(updateFeedbackData, 500));
