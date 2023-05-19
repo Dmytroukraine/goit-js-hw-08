@@ -31,7 +31,7 @@ const onFormSubmitting = event => {
     event.currentTarget.reset();
     feedbackData = {};
   } else {
-    console.log('Please fill in all fields');
+    alert('Please fill in all fields');
   }
 };
 
